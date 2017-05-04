@@ -1,13 +1,18 @@
-# Fortran-Python - Advection and Diffusion Models
-This repository contain program which simulate atmospheric advection and diffusion.
+# Fortran-Python-example
+Example of calling a fortran subroutine from python with makefile.
 
-The numerical schemes are contained in Fortran subroutines. The Python main program call these to construct the model and visualize the results in a realtime animation.
+The example prints the n first Fibonacci numbers using a Fortran subroutine which is called from Python.
 
-## Dependencies
-Python 3
-gcc
-gfortran
-f2py
-matplotlib
-numpy
-scipy
+## Makefile commands
+### make 
+Creates the Python module from the Fortran source 
+### make check
+checks the syntax in the Fortran source code.
+### make clean
+removes any final and intermediary files created during compilation
+
+## Build Dependencies
+### py2f
+Creation of wrapper function
+### gcc
+### gfortran
