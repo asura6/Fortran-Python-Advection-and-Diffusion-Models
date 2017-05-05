@@ -1,7 +1,9 @@
-# Fortran-Python-example
-Example of calling a fortran subroutine from python with makefile.
+# Fortran-Python Advection and Diffusion Models
+These programs use numerical schemes to simulate the time-evolution of physical
+advection and diffusion.
 
-The example prints the n first Fibonacci numbers using a Fortran subroutine which is called from Python.
+The programs have a consistent structure where Fortran subroutines handle the
+numerical schemes and Python programs to visualize the results.
 
 ## Makefile commands
 ### make 
@@ -13,6 +15,9 @@ removes any final and intermediary files created during compilation
 
 ## Build Dependencies
 ### py2f
-Creation of wrapper function
-### gcc
-### gfortran
+Creation of wrapper function 
+### gfortran 
+### python 3
+### numpy
+### scipy
+### matplotlib
