@@ -4,9 +4,9 @@ import matplotlib.animation as animation
 import numerical_schemes
 
 """ Define simulation parameters """
-u = 1               #m/s
-dt = 1/219          #s time step
-dx = 0.1            #m spatial resolution
+u = 1               # m/s
+dt = 1/20         # s time step
+dx = 0.1            # m spatial resolution
 D = 1
 # Domain
 x_w = - 10

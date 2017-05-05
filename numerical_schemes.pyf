@@ -1,0 +1,46 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module numerical_schemes ! in 
+    interface  ! in :numerical_schemes
+        subroutine step_ftbs(dx,dt,u,c,x_dim) ! in :numerical_schemes:Numerical_Schemes_One_Dim.f95
+            real intent(in) :: dx
+            real intent(in) :: dt
+            real dimension(x_dim),intent(in) :: u
+            real dimension(x_dim),intent(in,out),depend(x_dim) :: c
+            integer, optional,check(len(u)>=x_dim),depend(u) :: x_dim=len(u)
+        end subroutine step_ftbs
+        subroutine step_ftbs_diffusion(dx,dt,u,d,c,x_dim) ! in :numerical_schemes:Numerical_Schemes_One_Dim.f95
+            real intent(in) :: dx
+            real intent(in) :: dt
+            real dimension(x_dim),intent(in) :: u
+            real intent(in) :: d
+            real dimension(x_dim),intent(in,out),depend(x_dim) :: c
+            integer, optional,check(len(u)>=x_dim),depend(u) :: x_dim=len(u)
+        end subroutine step_ftbs_diffusion
+        subroutine step_upwind(dx,dy,dt,u,v,c,c_new,x_dim,y_dim) ! in :numerical_schemes:Numerical_Schemes_Two_Dim.f95
+            real intent(in) :: dx
+            real intent(in) :: dy
+            real intent(in) :: dt
+            real dimension(x_dim,y_dim),intent(in) :: u
+            real dimension(x_dim,y_dim),intent(in),depend(x_dim,y_dim) :: v
+            real dimension(x_dim,y_dim),intent(in),depend(x_dim,y_dim) :: c
+            real dimension(x_dim,y_dim),intent(out),depend(x_dim,y_dim) :: c_new
+            integer, optional,check(shape(u,0)==x_dim),depend(u) :: x_dim=shape(u,0)
+            integer, optional,check(shape(u,1)==y_dim),depend(u) :: y_dim=shape(u,1)
+        end subroutine step_upwind
+        subroutine step_leapfrog(dx,dy,dt,u,v,c,x_dim,y_dim) ! in :numerical_schemes:Numerical_Schemes_Two_Dim.f95
+            real intent(in) :: dx
+            real intent(in) :: dy
+            real intent(in) :: dt
+            real dimension(x_dim,y_dim),intent(in) :: u
+            real dimension(x_dim,y_dim),intent(in),depend(x_dim,y_dim) :: v
+            real dimension(x_dim,y_dim,2),intent(in,out),depend(x_dim,y_dim) :: c
+            integer, optional,check(shape(u,0)==x_dim),depend(u) :: x_dim=shape(u,0)
+            integer, optional,check(shape(u,1)==y_dim),depend(u) :: y_dim=shape(u,1)
+        end subroutine step_leapfrog
+    end interface 
+end python module numerical_schemes
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/

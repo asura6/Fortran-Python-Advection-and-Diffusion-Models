@@ -5,7 +5,7 @@ import numerical_schemes
 
 """ Define simulation parameters """
 u = 5               # m/s windspeed
-dt = 1/210           # s time step
+dt = 1/210          # s time step
 dx = 5.0            # m spatial resolution
 # Domain
 x_w = -10           # m

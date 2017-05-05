@@ -6,9 +6,9 @@ import matplotlib.colors as colors
 import numerical_schemes
 
 """ Define simulation parameters """
-dt = 0.40           #s time step
-dx = 2.             #m spatial resolution
-dy = 2.             #m spatial resolution
+dt = 0.40           # s time step
+dx = 2.             # m spatial resolution
+dy = 2.             # m spatial resolution
 u_max = 5           # m/s
 v_max = 5           # m/s
 # Domain
