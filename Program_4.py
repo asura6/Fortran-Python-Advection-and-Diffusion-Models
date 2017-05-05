@@ -51,7 +51,7 @@ def Init():
 def Run(i): 
     global C 
     # Call the Fortran numerical scheme to get the next time step distribution
-    C = Numerical_Scheme.step_advection_diffusion(dx, dt, u, D, C) 
+    C = numerical_schemes.step_advection_diffusion(dx, dt, u, D, C) 
     # Update animation plot data
     line.set_data(x, C) 
 

@@ -2,15 +2,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation 
 # Import the Fortran module
-import Advection_One_Dim as Numerical_Scheme 
+import numerical_schemes
 
 # Define simulation parameters
 u = 5               #m/s windspeed
-dt = 0.01          #s time step
+dt = 0.10          #s time step
 dx = 0.5            #m spatial resolution
 x_dim = 4000          #Model gridpoints 
 # Stop time (Can be infinitely large)
-t_stop = 10 #s 
+t_stop = 10000 #s 
 
 # Initialize target variable
 C = np.zeros(x_dim)
@@ -44,7 +44,7 @@ def Init():
 def Run(i): 
     global C 
     # Call the Fortran numerical scheme to get the next time step distribution
-    C = Numerical_Scheme.step_advection(dx, dt, u, C) 
+    C = numerical_schemes.step_advection(dx, dt, u, C) 
     # Update animation plot data
     line.set_data(x, C) 
 

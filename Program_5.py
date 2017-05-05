@@ -27,14 +27,16 @@ X, Y = np.meshgrid(x, y)
 
 ########
 # Initialize wind field (low pressure system northern hemesphere) 
+u = np.zeros([x_dim, y_dim], order='F')
+v = np.zeros([x_dim, y_dim], order='F')
 Ux, Uy = np.meshgrid(np.linspace(-1, 0, x_dim), np.linspace(-1, 0, y_dim)) 
-u = np.sin(np.pi * Ux) * np.cos(np.pi * Uy) * u_max
-v = -np.cos(np.pi * Ux) * np.sin(np.pi * Uy) * v_max 
+u[:,:] = np.sin(np.pi * Ux) * np.cos(np.pi * Uy) * u_max
+v[:,:] = -np.cos(np.pi * Ux) * np.sin(np.pi * Uy) * v_max 
 #plt.quiver(X[::30,::30], Y[::30,::30],u[::30,::30],v[::30,::30])
 
 #########
 # Initialize the initial distribution of concentration of C 
-C = np.zeros([x_dim, y_dim, 2]) 
+C = np.zeros([x_dim, y_dim, 2],order='F') 
 mean = [7, 0]  # Location of "blob"
 std = [1, 1]    # Size of blob
 cx = norm.pdf((x - mean[1])/std[1])*10
@@ -43,7 +45,7 @@ cy = norm.pdf((y - mean[0])/std[0])*10
 #########
 # Initial and first step
 C[:,:,0] = np.outer(cx, cy) 
-C[:,:,1] = numerical_schemes.step_upwind(dx, dy, dt, u, v, C[:,:,0])
+C[:,:,1] = numerical_schemes.step_upwind(dx, dy, dt, v, u, C[:,:,0])
 #########
 # Prepare the animation plot
 fig, ax = plt.subplots()
@@ -55,7 +57,7 @@ plt.colorbar(cf)
 def Run(i): 
     global C 
     #C[:,:,1] = numerical_schemes.step_upwind(dx, dy, dt, u, v, C[:,:,1]) 
-    C = numerical_schemes.step_leapfrog(dx, dy, dt, u, v, C) 
+    C[:,:,:] = numerical_schemes.step_leapfrog(dx, dy, dt, v, u, C) 
 
     ax.clear()
     ax.contourf(x,y,C[:,:,1], np.arange(-0, 1, 0.1), extend='both', cmap=cm.viridis) 
@@ -63,6 +65,6 @@ def Run(i):
     ax.set_ylabel('y')
     return ax
 
-ani = animation.FuncAnimation(fig, Run,interval=70, blit=False) 
+ani = animation.FuncAnimation(fig, Run,interval=0, blit=False) 
 
 plt.show() 

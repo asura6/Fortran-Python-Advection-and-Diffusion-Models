@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation 
 # Import the Fortran module
-import Advection_One_Dim as Numerical_Scheme 
+import numerical_schemes
 
 # Define simulation parameters 
 dt = 0.01          #s time step
@@ -50,7 +50,7 @@ def Init():
 def Run(i): 
     global C 
     # Call the Fortran numerical scheme to get the next time step distribution
-    C = Numerical_Scheme.step_advection(dx, dt, u, C) 
+    C = numerical_schemes.step_advection(dx, dt, u, C) 
     # Update animation plot data
     line.set_data(x, C) 
 
