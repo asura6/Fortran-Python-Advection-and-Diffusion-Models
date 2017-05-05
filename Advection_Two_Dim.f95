@@ -1,99 +1,76 @@
+! Preprocessor definitions
+! Centered, backward and forward index for the x-dimension
+#define ix      2:(x_dim-1)
+#define ix_m    1:(x_dim-2)
+#define ix_p    3:x_dim
+! Centered, backward and forward index for the y-dimension
+#define iy      2:(y_dim-1)
+#define iy_m    1:(y_dim-2)
+#define iy_p    3:y_dim
+
 ! Usage from Python:
-! step_advection(dx, dt, u, C_now)
-! Parameters x_dim and C_new are not passed explicitly through a function call
+! step_upwind(dx, dy, dt, u, v, C)
 subroutine step_upwind(dx, dy, dt, u, v, C, C_new, x_dim, y_dim)
-    !!!!!!!!!!!!
-    ! Preamble !
-    !!!!!!!!!!!!  
-    implicit none 
+    implicit none
+    ! Arguments
+    integer                 :: x_dim, y_dim
+    real, intent(in)        :: dx, dy, dt
+    real, intent(in)        :: C(x_dim, y_dim), u(x_dim, y_dim), v(x_dim, y_dim)
+    real, intent(out)       :: C_new(x_dim, y_dim)
 
-    ! Arguments 
-    integer                 :: x_dim, y_dim 
-    double precision, intent(in)        :: dx, dy, dt
-    double precision, intent(in)        :: C(x_dim, y_dim), u(x_dim, y_dim), v(x_dim, y_dim)
-    double precision, intent(out)       :: C_new(x_dim, y_dim) 
-    double precision                    :: term1, term2
+    ! Local variables
+    real, dimension(x_dim - 2, y_dim - 2) :: x_term, y_term
 
-    ! Local variables 
-    integer                 :: i, j
+    !---------------
+    ! Begin program
+    !---------------
 
-    !!!!!!!!!!!!!!!!!!
-    ! Begin function !
-    !!!!!!!!!!!!!!!!!!
+    x_term(:,:) = (&
+        MAX(u(ix,iy), 0.) * (C(ix,iy) - C(ix_m,iy)) +&
+        MIN(u(ix,iy), 0.) * (C(ix_p,iy) - C(ix,iy)) &
+        )/dx
 
-    ! Set boundaries to zero
-    do i = 1, x_dim
-        C_new(i, 1) = 0
-        C_new(i, y_dim) = 0
-    end do
-    do j = 1, y_dim
-        C_new(1, j) = 0
-        C_new(x_dim, j) = 0
-    end do 
+    y_term(:,:) = (&
+        MAX(v(ix,iy), 0.) * (C(ix,iy) - C(ix,iy_m)) +&
+        MIN(v(ix,iy), 0.) * (C(ix,iy_p) - C(ix,iy)) &
+        )/dy
 
-    ! Loop over the array and find a new C value for each element
-    do i = 2, x_dim - 2
-        do j = 2, y_dim - 2 
-            IF (u(i,j) .GT. 0) THEN !FTBS 
-                term1 = u(i,j) * (C(i,j) - C(i-1,j))/dx
-            ELSE                    !FTFS 
-                term1 = u(i,j) * (C(i+1,j) - C(i,j))/dx
-            END IF
+    C_new(ix,iy) = -(x_term + y_term)*dt + C(ix,iy)
 
-            IF (v(i,j) .GT. 0) THEN !FTBS
-                term2 = v(i,j) * (C(i,j) - C(i,j-1))/dy
-            ELSE                    !FTFS
-                term2 = v(i,j) * (C(i,j+1) - C(i,j))/dy
-            END IF 
+end subroutine
 
-            C_new(i,j) = (-term1 - term2)*dt + C(i,j)
-        end do
-    end do 
-
-end subroutine 
-
+! Usage from Python:
+! step_leapfrog(dx, dy, dt, u, v, C)
 subroutine step_leapfrog(dx, dy, dt, u, v, C, x_dim, y_dim)
-    !!!!!!!!!!!!
-    ! Preamble !
-    !!!!!!!!!!!!  
-    implicit none 
-
-    ! Arguments 
-    integer                 :: x_dim, y_dim 
+    implicit none
+    ! Arguments
+    integer                 :: x_dim, y_dim
     real, intent(in)        :: dx, dy, dt
     real, intent(in)        :: u(x_dim, y_dim), v(x_dim, y_dim)
-    double precision, intent(inout)      :: C(x_dim, y_dim, 2) 
-    !f2py intent(in,out) :: C 
-    double precision                     :: C_new(x_dim, y_dim) 
+    real, intent(inout)     :: C(x_dim, y_dim, 2)
+    !f2py intent(in,out)    :: C
 
-    ! Local variables 
-    integer                 :: i, j
+    ! Local variabless
+    real                    :: C_new(x_dim, y_dim)
 
-    !!!!!!!!!!!!!!!!!!
-    ! Begin function !
-    !!!!!!!!!!!!!!!!!!
+    !---------------
+    ! Begin program !
+    !---------------
 
-    ! Set boundaries to zero
-    do i = 1, x_dim
-        C_new(i, 1) = 0
-        C_new(i, y_dim) = 0
-    end do
-    do j = 1, y_dim
-        C_new(1, j) = 0
-        C_new(x_dim, j) = 0
-    end do 
+    ! Initialize only the boundaries
+    C_new(:,1) = 0.
+    C_new(:,y_dim) = 0.
+    C_new(1,:) = 0.
+    C_new(x_dim,:) = 0.
 
-    ! Step forward
-    do i = 2, x_dim - 1
-        do j = 2, x_dim - 1
-            C_new(i,j) = ( -u(i,j)*(C(i+1,j,2) - C(i-1,j,2))/(2*dx) -&
-                v(i,j)*(C(i,j+1,2) - C(i,j-1,2))/(2*dy) )*2*dt + C(i,j,1)
-        end do
-    end do
+    ! Step
+    C_new(ix,iy) = (                                                           &
+        - u(ix,iy) * ( C(ix_p,iy,2) - C(ix_m,iy,2) ) / (2 * dx)                &
+        - v(ix,iy) * ( C(ix,iy_p,2) - C(ix,iy_m,2) ) / (2 * dy)                &
+        ) * 2 *dt + C(ix,iy,1)
 
-    ! Apply filter
-    !C_new(:,:) = C(:,:,2) + 0.05/2.0*(C_new(:,:) - 2*C(:,:,2) + C(:,:,1)) 
     ! Switch out the old result
     C(:,:,1) = C(:,:,2)
-    C(:,:,2) = C_new 
+    C(:,:,2) = C_new
+
 end subroutine

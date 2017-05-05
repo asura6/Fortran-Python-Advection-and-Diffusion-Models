@@ -1,67 +1,47 @@
+! Preprocessor definitions
+! Indexes used by the numerical schemes
+#define ix      2:x_dim
+#define ix_m    1:(x_dim-1)
+#define ix_c    2:(x_dim-1)
+#define ix_cp   3:x_dim
+#define ix_cm   1:(x_dim-2)
+
 ! Usage from Python:
-! step_advection(dx, dt, u, C_now)
-! Parameters x_dim and C_new are not passed explicitly through a function call
-subroutine step_advection(dx, dt, u, C_now, C_new, x_dim)
-    !!!!!!!!!!!!
-    ! Preamble !
-    !!!!!!!!!!!!  
-
-    implicit none 
-
-    ! Arguments 
-    integer                 :: x_dim 
+! step_advection(dx, dt, u, C)
+subroutine step_ftbs(dx, dt, u, C, x_dim)
+    implicit none
+    ! Arguments
+    integer                 :: x_dim
     real, intent(in)        :: dx, dt
-    real, intent(in)        :: C_now(x_dim), u(x_dim)
-    real, intent(out)       :: C_new(x_dim) 
+    real, intent(in)        :: u(x_dim)
+    real, intent(inout)     :: C(x_dim)
+    !f2py intent(in,out)    :: C
 
-    ! Local variables 
-    integer                 :: i 
+    !---------------
+    ! Begin program
+    !---------------
 
-    !!!!!!!!!!!!!!!!!!
-    ! Begin function !
-    !!!!!!!!!!!!!!!!!!
-
-    ! Set left boundary to zero
-    C_new(1) = 0
-    ! Loop over the array and find a new C value for each element
-    do i = 2, x_dim
-        C_new(i) = dt * ( -u(i) * (C_now(i) - C_now(i-1)) / dx - &
-            C_now(i) * (u(i) - u(i-1)) / dx ) + &
-            C_now(i)
-    end do 
+    C(ix) = dt * ( -u(ix)* (C(ix)-C(ix_m)) - C(ix) * (u(ix)-u(ix_m)) ) *       &
+        dt/dx + C(ix)
 
 end subroutine
 
 ! Usage from Python:
-! step_advection_diffusion(dx, dt, u, D, C_now)
-! Parameters x_dim and C_new are not passed explicitly through a function call
-subroutine step_advection_diffusion(dx, dt, u, D, C_now, C_new, x_dim)
-    !!!!!!!!!!!!
-    ! Preamble !
-    !!!!!!!!!!!!  
-
-    implicit none 
-
-    ! Arguments 
-    integer                 :: x_dim 
+! step_ftbs_diffusion(dx, dt, u, D, C)
+subroutine step_ftbs_diffusion(dx, dt, u, D, C, x_dim)
+    implicit none
+    ! Arguments
+    integer                 :: x_dim
     real, intent(in)        :: dx, dt, D
-    real, intent(in)        :: C_now(x_dim), u(x_dim)
-    real, intent(out)       :: C_new(x_dim) 
+    real, intent(in)        :: u(x_dim)
+    real, intent(inout)     :: C(x_dim)
+    !f2py intent(in,out)    :: C
 
-    ! Local variables 
-    integer                 :: i 
+    !---------------
+    ! Begin program
+    !---------------
 
-    !!!!!!!!!!!!!!!!!!
-    ! Begin function !
-    !!!!!!!!!!!!!!!!!!
+    C(ix_c) = D * ( (C(ix_cp) -2*C(ix_c) + C(ix_cm))/dx**2                     &
+        - u(ix_c) * (C(ix_c) - C(ix_cm))/dx ) * dt + C(ix_c)
 
-    ! Set boundaries to zero
-    C_new(1) = 0
-    C_new(x_dim) = 0
-    ! Loop over the array and find a new C value for each element
-    do i = 2, x_dim - 1
-        C_new(i) = (D*(C_now(i+1) - 2*C_now(i) + C_now(i-1)) &
-            - u(i)*(C_now(i) - C_now(i-1))/dx)*dt + C_now(i)
-    end do 
-    return
-end subroutine 
+end subroutine
