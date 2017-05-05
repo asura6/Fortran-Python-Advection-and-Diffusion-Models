@@ -14,11 +14,11 @@ x_e = 15
 x_dim = int((x_e - x_w)//dx)
 C = np.zeros(x_dim, order='F')
 x = np.linspace(x_w, x_e, x_dim)
-u = np.zeros(x_dim)
+u = np.zeros(x_dim,order='F')
 
 """ choices of initial conditions """
 C[x_dim//2:x_dim//2+10] = 1 # Step function
-#C[:] = np.random.random(x_dim) # Pulse of random values
+#C = np.random.random(x_dim) # Pulse of random values
 # Wind distribution
 u = [1 - 1/(1 + x**2) if x >= 0 else 0 for x in x]
 

@@ -29,8 +29,8 @@ X, Y = np.meshgrid(x, y)
 
 """ Initialize wind field (low pressure system northern hemesphere) """
 Ux, Uy = np.meshgrid(np.linspace(-1, 0, x_dim), np.linspace(-1, 0, y_dim))
-u[:,:] = np.sin(np.pi * Ux) * np.cos(np.pi * Uy) * u_max
-v[:,:] = -np.cos(np.pi * Ux) * np.sin(np.pi * Uy) * v_max
+u = np.sin(np.pi * Ux) * np.cos(np.pi * Uy) * u_max
+v = -np.cos(np.pi * Ux) * np.sin(np.pi * Uy) * v_max
 # Uncomment to plot the wind-field
 #fig, ax = plt.quiver(X[::30,::30], Y[::30,::30],u[::30,::30],v[::30,::30])
 #ax.set_xlabel('x [m]',fontsize=16)
@@ -58,7 +58,7 @@ plt.colorbar(cf)
 def Run(i):
     global C
     #C[:,:,1] = numerical_schemes.step_upwind(dx, dy, dt, v, u, C[:,:,1])
-    C[:,:,:] = numerical_schemes.step_leapfrog(dx, dy, dt, v, u, C)
+    C = numerical_schemes.step_leapfrog(dx, dy, dt, v, u, C)
 
     ax.clear()
     ax.pcolor(x,y,C[:,:,1],cmap='viridis',vmin=0, vmax=1, norm=norm)

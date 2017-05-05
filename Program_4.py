@@ -14,14 +14,13 @@ x_e = 10
 """ Initialize dimensions, coordinates and variables """
 x_dim = int((x_e - x_w)//dx)
 x = np.linspace(x_w, x_e, x_dim)
-C = np.zeros(x_dim)
-u = np.zeros(x_dim)
-
+C = np.zeros(x_dim,order='F')
+u = np.zeros(x_dim,order='F') 
 
 """ Choices of initial conditions """
 ix = [i for i, v in enumerate(x) if v > -10 and v < 10]
 #C[ix] = 1
-C[:] = np.random.random(x_dim) # Random values
+C = np.random.random(x_dim) # Random values
 u = [1 - 1/(1 + x**2) if x >= 0 else 0 for x in x] # Wind distribution
 
 """ Prepare the animation plot """

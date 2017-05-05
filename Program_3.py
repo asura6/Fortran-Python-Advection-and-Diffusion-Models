@@ -5,7 +5,7 @@ import numerical_schemes
 
 """ Define simulation parameters """
 u = 1               # m/s
-dt = 1/20         # s time step
+dt = 1/300          # s time step
 dx = 0.1            # m spatial resolution
 D = 1
 # Domain
@@ -15,12 +15,12 @@ x_e = 10
 """ Initialize dimensions, coordinates and variables """
 x_dim = int((x_e - x_w)//dx)
 x = np.linspace(x_w, x_e, x_dim)
-C = np.zeros(x_dim)
-u = np.ones(x_dim) * u # Constant wind speed
+C = np.zeros(x_dim,order='F')
+u = np.ones(x_dim,order='F') * u # Constant wind speed
 
 """ choices of initial conditions """
 #C[6:9] = 1 # Step function
-C[:] = np.random.random(x_dim) # Pulse of random values
+C = np.random.random(x_dim) # Pulse of random values
 
 """ Prepare the animation plot """
 fig, ax1 = plt.subplots()
