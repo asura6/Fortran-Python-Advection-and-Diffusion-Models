@@ -3,7 +3,7 @@ TARGET_MODULE = numerical_schemes
 # compiling
 FC = gfortran
 # Fortfran flag - Show warnings and error if code is not conformal to f95
-FFLAGS = -std=f95 -Wall -Wextra -Wconversion -fbacktrace -cpp
+FFLAGS = -std=f95 -Wall -Wextra -Wconversion -fbacktrace -cpp -Ofast
 FFLAGS += -ffpe-trap=zero,overflow,underflow
 # Fortran files
 FSRC = $(wildcard *.f*)

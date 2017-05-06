@@ -60,11 +60,12 @@ def Run(i):
     #C[:,:,1] = numerical_schemes.step_upwind(dx, dy, dt, v, u, C[:,:,1])
     C = numerical_schemes.step_leapfrog(dx, dy, dt, v, u, C)
 
-    ax.clear()
-    ax.pcolor(x,y,C[:,:,1],cmap='viridis',vmin=0, vmax=1, norm=norm)
-    ax.set_xlabel('x [m]',fontsize=16)
-    ax.set_ylabel('y [m]',fontsize=16)
-    ax.set_title('Time: '+ str(int(i*dt)) + 's',fontsize=16)
+    if (i % 10 == 0):
+       ax.clear()
+       ax.pcolor(x,y,C[:,:,1],cmap='viridis',vmin=0, vmax=1, norm=norm)
+       ax.set_xlabel('x [m]',fontsize=16)
+       ax.set_ylabel('y [m]',fontsize=16)
+       ax.set_title('Time: '+ str(int(i*dt)) + 's',fontsize=16)
     return ax
 
 ani = animation.FuncAnimation(fig, Run,interval=0, blit=False)
